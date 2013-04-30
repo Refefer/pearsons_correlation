@@ -1,0 +1,40 @@
+#!/usr/bin/awk -f
+
+BEGIN {
+    sumX = 0;
+    sumY = 0;
+    sumXY = 0;
+    sumX2 = 0;
+    sumY2 = 0;
+    n = 0
+
+    if(!f1) f1 = 1;
+    if(!f2) f2 = 2;
+    rx = "([0-9]+(\\.[0-9]+)?)";
+}
+
+function add(x,y) {
+    n += 1
+    sumX += x;
+    sumY += y;
+    sumXY += x*y;
+    sumX2 += x^2;
+    sumY2 += y^2;
+    matched = 1;
+}
+
+{
+    matched = 0
+}
+
+$f1 ~ rx && $f2 ~rx {
+    match($f1,rx,r1);
+    match($f2,rx,r2);
+    add(r1[0],r2[0]);
+}
+
+END {
+    rTop = (sumXY - (sumX*sumY)/n);
+    rBottom = ((sumX2 - (sumX ^ 2 / n)) * (sumY2 - (sumY ^ 2/ n))) ^ .5;
+    printf("R: %.3f", rTop/rBottom);
+}
